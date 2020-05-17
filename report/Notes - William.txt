@@ -1,0 +1,19 @@
+Notes for CS 584 Semester Project
+---------------------------------
+
+- Probably want to compare other models (UW, etc.).
+  - Compare the model itself (what are they modeling and we are not, and vice-versa)
+  - Also compare predictions.
+ 
+- Probably want to do some verification on OUR model.
+  - Try to calculate the transmission rate up until 2 weeks ago (for example). Use the same method to make predictions, and compare against the real data.
+
+- SEIR model. Incorporate test results? (Total tests, % of positive and negative)
+
+- What is the effect of different averaging methods?
+  - SMA vs Gaussian, etc.
+
+- Better graphing!
+  - Show graphs with extrapolated transmission rates
+  - Show graphs with predictions
+  - Show graphs for each country and comparing countries, etc.
