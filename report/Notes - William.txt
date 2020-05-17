@@ -17,3 +17,11 @@ Notes for CS 584 Semester Project
   - Show graphs with extrapolated transmission rates
   - Show graphs with predictions
   - Show graphs for each country and comparing countries, etc.
+
+
+- Extrapolations
+  (1a) Trending to 0
+  (1b) Opposite of trending to 0
+  (2) Constant 7 day average
+  (3) Reverse of the last 30 days
+  (4) Trending to max
