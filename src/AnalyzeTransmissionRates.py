@@ -111,13 +111,15 @@ def getObservedModelValues(tsData, countryName):
     gammaObserved = newFloatArray(tsSize)
     
     for i in range(tsSize):
-        S[i] = countryPopulation - confirmed[i] - deaths[i] - recovered[i]
-        I[i] = confirmed[i]
+        #rTemp[i] = deaths[i] + recovered[i]
+        
+        S[i] = countryPopulation - confirmed[i] #- deaths[i] - recovered[i]
+        I[i] = confirmed[i] - deaths[i] - recovered[i]
         R[i] = deaths[i] + recovered[i]
     
         if i == 0:
-            sDelta[i] = -1 * (confirmed[i] + deaths[i] + recovered[i])
-            iDelta[i] = confirmed[i]
+            sDelta[i] = -1 * confirmed[i]
+            iDelta[i] = confirmed[i] - deaths[i] - recovered[i]
             rDelta[i] = deaths[i] + recovered[i]
             betaObserved[i] = 0.0
             gammaObserved[i] = 0.0
@@ -428,9 +430,9 @@ if __name__ == '__main__':
     #    countryData = tsData.countryMap[countryName]
     #    print("Country is: " + countryName + ", and first case was: " + str(tsData.dateIndex[countryData.firstIndex]))
     
-    #for c in ["Brazil", "Russia", "Nigeria", "Mexico"]:
-    #    analyzeCountrySIR(tsData, c)
-    analyzeCountrySIR(tsData, "US")
+    for c in ["China", "Spain", "Germany", "France", "Italy"]: #Brazil", "Russia", "Nigeria", "Mexico"]:
+        analyzeCountrySIR(tsData, c)
+    #analyzeCountrySIR(tsData, "US")
         
     print("Done")
     
