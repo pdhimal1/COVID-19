@@ -24,31 +24,10 @@ def getFullTickLabel(dayIndex):
     tickDate = start + offset
     return tickDate.strftime("%b %d") + "  (" + str(dayIndexInt) + ")"
     
-     
-
-
-
 def updateTicks(x, pos):
-    return getFullTickLabel(x)   
-    
-def analyzeCountrySIR(tsData, countryName):
-    tsSize = tsData.dateCount
-    countryData = tsData.countryMap[countryName]
-    countryPopulation = countryData.population
-    futurePredictionDays = 60 # Arrays will be 31
-    cvPredictionDays = 30
-    
-    fullData = util.getObservedModelValues(tsData, countryName)
-    
-    historicalRange = np.arange(tsSize)
-    predictionRange = np.arange(tsSize - 1, tsSize + futurePredictionDays)
-    
-    futurePredictions = util.getStandardPredictions(tsData, countryName, 0, tsSize - 1, futurePredictionDays)
-    cvPredictions = util.getStandardPredictions(tsData, countryName, 0, tsSize - cvPredictionDays - 1, cvPredictionDays)
-    cvTrainRange = np.arange(0, tsSize - cvPredictionDays)
-    cvTestRange = np.arange(tsSize - cvPredictionDays - 1, tsSize)
-    cvFullRange = np.arange(0, tsSize)
-    
+    return getFullTickLabel(x) 
+
+def createHistoricalBetaChart(historicalRange, fullData, countryName):  
     figure1, axis1 = plt.subplots()
     figure1.set_size_inches(7.5, 7.5)
     axis1.plot(historicalRange, fullData["beta"], label="Observed beta", color="gray")
@@ -66,7 +45,7 @@ def analyzeCountrySIR(tsData, countryName):
     axis1.set_title("Historical Transmission Rate for " + countryName, fontsize="xx-large")
     #figure1.suptitle("Historical Transmission Rate for " + countryName)
     
-    
+def createPredictionChart(tsSize, futurePredictionDays, historicalRange, predictionRange, fullData, futurePredictions, countryName):    
     figure2, axis2 = plt.subplots()
     figure2.set_size_inches(7.5, 7.5)
 
@@ -95,6 +74,7 @@ def analyzeCountrySIR(tsData, countryName):
     axis2.set_title("60 Day Predictions for " + countryName + " (Infected and Recovered)", fontsize="xx-large")
     #figure2.suptitle("60 Day Predictions for " + countryName + " (Infected and Recovered)")
     
+def createPredictionsBetaChart(predictionRange, futurePredictions, countryName):    
     figure3, axis3 = plt.subplots()
     figure3.set_size_inches(7.5, 7.5)
     axis3.plot(predictionRange, futurePredictions["betaConstant"], label="Constant beta", color="red")
@@ -110,6 +90,7 @@ def analyzeCountrySIR(tsData, countryName):
     axis3.set_title("Prediction Beta Values for " + countryName, fontsize="xx-large")
     #figure3.suptitle("Prediction Beta Values for " + countryName)
     
+def createValidationChart(tsSize, fullData, cvPredictionDays, cvFullRange, cvTestRange, cvPredictions, countryName):
     figure4, axis4 = plt.subplots()
     figure4.set_size_inches(7.5, 7.5)
     #figure4.canvas.draw()
@@ -149,8 +130,39 @@ def analyzeCountrySIR(tsData, countryName):
     axis4.legend()
     axis4.set_title("Compare 30 Day Predictions vs. Actual for " + countryName + " (Infected and Recovered)", fontsize="xx-large")
     #figure2.suptitle("60 Day Predictions for " + countryName + " (Infected and Recovered)")
+
+def analyzeCountrySIR(tsData, countryName, chartSet, callShowPlot=True):
+    tsSize = tsData.dateCount
+    countryData = tsData.countryMap[countryName]
+    countryPopulation = countryData.population
+    futurePredictionDays = 60 # Arrays will be 31
+    cvPredictionDays = 30
     
-    plt.show()
+    fullData = util.getObservedModelValues(tsData, countryName)
+    
+    historicalRange = np.arange(tsSize)
+    predictionRange = np.arange(tsSize - 1, tsSize + futurePredictionDays)
+    
+    futurePredictions = util.getStandardPredictions(tsData, countryName, 0, tsSize - 1, futurePredictionDays)
+    cvPredictions = util.getStandardPredictions(tsData, countryName, 0, tsSize - cvPredictionDays - 1, cvPredictionDays)
+    cvTrainRange = np.arange(0, tsSize - cvPredictionDays)
+    cvTestRange = np.arange(tsSize - cvPredictionDays - 1, tsSize)
+    cvFullRange = np.arange(0, tsSize)
+    
+    if "HistoricalBetaChart" in chartSet:
+        createHistoricalBetaChart(historicalRange, fullData, countryName)
+    
+    if "PredictionChart" in chartSet:
+        createPredictionChart(tsSize, futurePredictionDays, historicalRange, predictionRange, fullData, futurePredictions, countryName)
+        
+    if "PredictionsBetaChart" in chartSet:
+        createPredictionsBetaChart(predictionRange, futurePredictions, countryName)
+    
+    if "ValidationChart" in chartSet:
+        createValidationChart(tsSize, fullData, cvPredictionDays, cvFullRange, cvTestRange, cvPredictions, countryName)
+    
+    if callShowPlot:
+        plt.show()
 
 if __name__ == '__main__':
     tsData = common.getTimeSeriesData()
@@ -160,9 +172,14 @@ if __name__ == '__main__':
     #    countryData = tsData.countryMap[countryName]
     #    print("Country is: " + countryName + ", and first case was: " + str(tsData.dateIndex[countryData.firstIndex]))
     
-    #for c in ["China", "Spain", "Germany", "France", "Italy"]: #Brazil", "Russia", "Nigeria", "Mexico"]:
-    #    analyzeCountrySIR(tsData, c)
-    analyzeCountrySIR(tsData, "France")
+    allCharts = {"HistoricalBetaChart", "PredictionChart", "PredictionsBetaChart", "ValidationChart"}
+    
+    for c in ["China", "Spain", "Germany", "France", "Italy", "Brazil", "Russia", "Nigeria", "Mexico"]:
+        analyzeCountrySIR(tsData, c, {"HistoricalBetaChart"}, False)
+    
+    plt.show()
+    
+    #analyzeCountrySIR(tsData, "France")
         
     print("Done")
     

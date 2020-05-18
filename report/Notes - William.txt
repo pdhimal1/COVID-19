@@ -19,6 +19,8 @@ Notes for CS 584 Semester Project
   - Show graphs for each country and comparing countries, etc.
 
 
+- 
+
 - Extrapolations
   (1a) Trending to 0
   (1b) Opposite of trending to 0
@@ -29,3 +31,27 @@ Notes for CS 584 Semester Project
 
 - Validation
   - Convert x-axis labels to "index (date label)"
+  
+  
+  
+Left To Do 5/18/2020
+====================
+1. Update report with analysis.
+2. Add code to use scikit optimizer to solver for best beta and gamma!
+3. Structure predictions according to these dimesions:
+   a) Beta smoothing factor (2.5 is what I've been using)
+   b) Number of days in the past to use for the prediction. Usually 1 - 60 days or so.
+   c1) Number of samples points within this interval to use for the the prediction.
+   c2) Maybe a weight scheme for the points??
+   d) Method of extrapolation: Trained on NN, constant value, linear model, quadratic?
+
+4. Graph the changes across each dimension. Find the best one, report on SSE, make future predictions.
+
+
+
+Ideas for report:
+ - Outline the intuition behind the beta and gamma parameters.
+   - How do the things that we hear about (social distancing, contact tracing, bed count, etc.) influence these parameters?
+ - 
+
+- Beta representation - absolute vs. multiplied by N.

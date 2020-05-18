@@ -37,7 +37,8 @@ if __name__ == '__main__':
     #y_test = np.reshape(y_test, newshape=(-1, 1))
     
     
-    reg = MLPRegressor(alpha=1e-05, hidden_layer_sizes=(5, 4, 2), random_state=1, solver='lbfgs')
+    #reg = MLPRegressor(alpha=1e-05, hidden_layer_sizes=(5, 4, 2), random_state=1, solver='lbfgs')
+    reg = MLPRegressor(alpha=1e-07, hidden_layer_sizes=(5, 4, 3), random_state=1, solver='lbfgs')
     reg.fit(X_train, y_train)
     print("Finished training!!")
     
