@@ -342,18 +342,18 @@ def analyzeCountrySIR(tsData, countryName):
 
     axis2.axvspan(tsSize - 1, tsSize + futurePredictionDays - 2, alpha=0.3, color='gray')
     #plt.plot(historicalRange, S)
-    axis2.plot(historicalRange, fullData["I"], label="Infected (Confirmed Cases)", color="darkblue")
-    axis2.plot(historicalRange, fullData["R"], label="Recovered (Deaths + Recovered Cases)", color="mediumblue")
+    axis2.plot(historicalRange, fullData["I"], label="Infected (Confirmed Cases)", color="black", linestyle='solid')
+    axis2.plot(historicalRange, fullData["R"], label="Recovered (Deaths + Recovered Cases)", color="black", linestyle='dotted')
     
     #plt.plot(predictionRange, SP1)
-    axis2.plot(predictionRange, futurePredictions["sirConstant"][1], label="Infected Prediction (constant beta)", color="firebrick")
-    axis2.plot(predictionRange, futurePredictions["sirConstant"][2], label="Recovered Prediction (constant beta)", color="lightcoral")
+    axis2.plot(predictionRange, futurePredictions["sirConstant"][1], label="Infected Prediction (constant beta)", color="red", linestyle='solid')
+    axis2.plot(predictionRange, futurePredictions["sirConstant"][2], label="Recovered Prediction (constant beta)", color="red", linestyle='dotted')
     
-    axis2.plot(predictionRange, futurePredictions["sirDownward"][1], label="Infected Prediction (decreasing beta)", color="forestgreen")
-    axis2.plot(predictionRange, futurePredictions["sirDownward"][2], label="Recovered Prediction (decreasing beta)", color="limegreen")
+    axis2.plot(predictionRange, futurePredictions["sirDownward"][1], label="Infected Prediction (decreasing beta)", color="green", linestyle='solid')
+    axis2.plot(predictionRange, futurePredictions["sirDownward"][2], label="Recovered Prediction (decreasing beta)", color="green", linestyle='dotted')
     
-    axis2.plot(predictionRange, futurePredictions["sirContinueTrend"][1], label="Infected Prediction (continue beta trend)", color="royalblue")
-    axis2.plot(predictionRange, futurePredictions["sirContinueTrend"][2], label="Recovered Prediction (continue beta trend)", color="cornflowerblue")    
+    axis2.plot(predictionRange, futurePredictions["sirContinueTrend"][1], label="Infected Prediction (continue beta trend)", color="blue", linestyle='solid')
+    axis2.plot(predictionRange, futurePredictions["sirContinueTrend"][2], label="Recovered Prediction (continue beta trend)", color="blue", linestyle='dotted')    
     
     axis2.set_xlabel("Day Number")
     axis2.set_ylabel("Number of Individuals")
@@ -367,9 +367,9 @@ def analyzeCountrySIR(tsData, countryName):
     
     figure3, axis3 = plt.subplots()
     figure3.set_size_inches(7.5, 7.5)
-    axis3.plot(predictionRange, futurePredictions["betaConstant"], label="Constant beta", color="firebrick")
-    axis3.plot(predictionRange, futurePredictions["betaDownward"], label="Decreasing beta", color="forestgreen")
-    axis3.plot(predictionRange, futurePredictions["betaContinueTrend"], label="Continue beta trend", color="royalblue")
+    axis3.plot(predictionRange, futurePredictions["betaConstant"], label="Constant beta", color="red")
+    axis3.plot(predictionRange, futurePredictions["betaDownward"], label="Decreasing beta", color="green")
+    axis3.plot(predictionRange, futurePredictions["betaContinueTrend"], label="Continue beta trend", color="blue")
     axis3.set_xlabel("Day Number")
     axis3.set_ylabel("Transmission Rate")
     #axis3.xticks(np.arange(tsSize - 1, tsSize + predictionDays, 5))
@@ -384,20 +384,20 @@ def analyzeCountrySIR(tsData, countryName):
     figure4.set_size_inches(7.5, 7.5)
     #figure4.canvas.draw()
 
-    axis4.axvspan(tsSize - cvPredictionDays - 1, tsSize, alpha=0.3, color='gray')
+    axis4.axvspan(tsSize - cvPredictionDays - 1, tsSize, alpha=0.3, color='silver')
     #plt.plot(historicalRange, S)
-    axis4.plot(cvFullRange, fullData["I"], label="Infected (Confirmed Cases)", color="darkblue", linewidth=4)
-    axis4.plot(cvFullRange, fullData["R"], label="Recovered (Deaths + Recovered Cases)", color="mediumblue", linewidth=4)
+    axis4.plot(cvFullRange, fullData["I"], label="Infected (Confirmed Cases)", color="black", linestyle='solid', linewidth=3.5)
+    axis4.plot(cvFullRange, fullData["R"], label="Recovered (Deaths + Recovered Cases)", color="black", linestyle='dotted', linewidth=3.5)
     
     #plt.plot(predictionRange, SP1)
-    axis4.plot(cvTestRange, cvPredictions["sirConstant"][1], label="Infected Prediction (constant beta)", color="firebrick")
-    axis4.plot(cvTestRange, cvPredictions["sirConstant"][2], label="Recovered Prediction (constant beta)", color="lightcoral")
+    axis4.plot(cvTestRange, cvPredictions["sirConstant"][1], label="Infected Prediction (constant beta)", color="red", linestyle='solid')
+    axis4.plot(cvTestRange, cvPredictions["sirConstant"][2], label="Recovered Prediction (constant beta)", color="red", linestyle='dotted')
     
-    axis4.plot(cvTestRange, cvPredictions["sirDownward"][1], label="Infected Prediction (decreasing beta)", color="forestgreen")
-    axis4.plot(cvTestRange, cvPredictions["sirDownward"][2], label="Recovered Prediction (decreasing beta)", color="limegreen")
+    axis4.plot(cvTestRange, cvPredictions["sirDownward"][1], label="Infected Prediction (decreasing beta)", color="green", linestyle='solid')
+    axis4.plot(cvTestRange, cvPredictions["sirDownward"][2], label="Recovered Prediction (decreasing beta)", color="green", linestyle='dotted')
     
-    axis4.plot(cvTestRange, cvPredictions["sirContinueTrend"][1], label="Infected Prediction (continue beta trend)", color="royalblue")
-    axis4.plot(cvTestRange, cvPredictions["sirContinueTrend"][2], label="Recovered Prediction (continue beta trend)", color="cornflowerblue")    
+    axis4.plot(cvTestRange, cvPredictions["sirContinueTrend"][1], label="Infected Prediction (continue beta trend)", color="blue", linestyle='solid')
+    axis4.plot(cvTestRange, cvPredictions["sirContinueTrend"][2], label="Recovered Prediction (continue beta trend)", color="blue", linestyle='dotted')    
     
     axis4.set_xlabel("Day Number")
     axis4.set_ylabel("Number of Individuals")
@@ -430,9 +430,9 @@ if __name__ == '__main__':
     #    countryData = tsData.countryMap[countryName]
     #    print("Country is: " + countryName + ", and first case was: " + str(tsData.dateIndex[countryData.firstIndex]))
     
-    for c in ["China", "Spain", "Germany", "France", "Italy"]: #Brazil", "Russia", "Nigeria", "Mexico"]:
-        analyzeCountrySIR(tsData, c)
-    #analyzeCountrySIR(tsData, "US")
+    #for c in ["China", "Spain", "Germany", "France", "Italy"]: #Brazil", "Russia", "Nigeria", "Mexico"]:
+    #    analyzeCountrySIR(tsData, c)
+    analyzeCountrySIR(tsData, "US")
         
     print("Done")
     
