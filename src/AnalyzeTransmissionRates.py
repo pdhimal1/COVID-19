@@ -3,6 +3,7 @@ Created on May 16, 2020
 
 @author: William
 '''
+import Utilities as util
 import Common as common
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,296 +26,25 @@ def getFullTickLabel(dayIndex):
     
      
 
-def newIntArray(size):
-    return np.zeros(shape=(size,), dtype=np.int64)
 
-def newFloatArray(size):
-    return np.zeros(shape=(size,), dtype=np.float64)
-
-def getSimpleFilter(size):
-    x = np.ones(shape=(size,), dtype=np.float64)
-    return x / size
-
-def getSavitskyGovol(inputArray):
-    return savgol_filter(inputArray, 7, 3)
-
-def getGaussianAverage(inputArray, sigma):
-    return gaussian_filter1d(inputArray, sigma, mode='nearest') 
-
-def getSimpleMovingAverage(inputArray, smoothingSize):
-    smoothingFilter = getSimpleFilter(smoothingSize) 
-    smoothedArray = np.convolve(inputArray, smoothingFilter, 'same')
-    return smoothedArray
-    #f = interpolate.interp1d(xValues, inputArray, 'cubic')
-    '''
-    smoothed = newFloatArray(arraySize)
-    for i in range(smoothSize - 1, arraySize):
-        currentSum = 0
-        for j in range(smoothSize):
-            currentSum +=
-    '''
-    #return f(xValues)
-def getPredictionsSIR(betaArray, gammaArray, sInit, iInit, rInit, countryPopulation):
-    predictionSize = betaArray.shape[0]
-    sPredict = newFloatArray(predictionSize)
-    iPredict = newFloatArray(predictionSize)
-    rPredict = newFloatArray(predictionSize)
-    
-    for i in range(predictionSize):
-        if i == 0:
-            #sPredict[i] = sInit - (sInit * iInit) / countryPopulation
-            #iPredict[i] = iInit + (sInit * iInit) / countryPopulation - gamma * iInit
-            #rPredict[i] = rInit + gamma * iInit
-            sPredict[i] = sInit
-            iPredict[i] = iInit
-            rPredict[i] = rInit
-        else:
-            infectionCount = (betaArray[i] * (sPredict[i - 1] * iPredict[i - 1])) / countryPopulation
-            recoveryCount = gammaArray[i] * iPredict[i - 1]
-            sPredict[i] = sPredict[i - 1] - infectionCount
-            iPredict[i] = iPredict[i - 1] + infectionCount - recoveryCount
-            rPredict[i] = rPredict[i - 1] + recoveryCount
-            
-            #print("Day = " + str(i) + ": (S, I, R) = (" + str(sPredict[i]) + ", " + str(iPredict[i]) + ", " + str(rPredict[i]) + ")")
-            #print(" -> Infections = " + str(infectionCount) + ", Recoveries = " + str(recoveryCount))
-     
-    return [sPredict, iPredict, rPredict]
-
-def getRandomVariable(meanValue):
-    rv = np.random.normal(meanValue, meanValue / 8)
-    return max(rv, 0.0)
-
-def getRandomBeta(meanValue):
-    rv = np.random.normal(meanValue, meanValue / 3.0)
-    if rv < 0.0:
-        return 0.0
-    
-    return rv
-
-def getObservedModelValues(tsData, countryName):
-    tsSize = tsData.dateCount
-    countryData = tsData.countryMap[countryName]
-    
-    countryPopulation = countryData.population
-    
-    confirmed = countryData.confirmed
-    recovered = countryData.recovered
-    deaths = countryData.deaths
-    
-    S = newIntArray(tsSize)
-    I = newIntArray(tsSize)
-    R = newIntArray(tsSize)
-    sDelta = newIntArray(tsSize)
-    iDelta = newIntArray(tsSize)
-    rDelta = newIntArray(tsSize)
-    betaObserved = newFloatArray(tsSize)
-    gammaObserved = newFloatArray(tsSize)
-    
-    for i in range(tsSize):
-        #rTemp[i] = deaths[i] + recovered[i]
-        
-        S[i] = countryPopulation - confirmed[i] #- deaths[i] - recovered[i]
-        I[i] = confirmed[i] - deaths[i] - recovered[i]
-        R[i] = deaths[i] + recovered[i]
-    
-        if i == 0:
-            sDelta[i] = -1 * confirmed[i]
-            iDelta[i] = confirmed[i] - deaths[i] - recovered[i]
-            rDelta[i] = deaths[i] + recovered[i]
-            betaObserved[i] = 0.0
-            gammaObserved[i] = 0.0
-        else:
-            sDelta[i] = S[i] - S[i - 1]
-            iDelta[i] = I[i] - I[i - 1]
-            rDelta[i] = R[i] - R[i - 1]
-            
-            if I[i - 1] > 0:
-                betaObserved[i] = (-1 * sDelta[i]) / ((S[i - 1] * I[i - 1]) / countryPopulation)
-                gammaObserved[i] = rDelta[i] / I[i - 1]
-            else:
-                betaObserved[i] = 0
-                gammaObserved[i] = 0
-        
-    #betaSmoothed = performInterpolation(betaObserved)
-    #betaSmoothed3 = getSimpleMovingAverage(betaObserved, 3)
-    #betaSmoothed7 = getSimpleMovingAverage(betaObserved, 7)
-    #savitskyGovol = getSavitskyGovol(betaObserved)
-    betaSmoothed = getGaussianAverage(betaObserved, 2.5)
-    
-    return {"S": S, "I": I, "R": R, "beta": betaObserved, "gamma": gammaObserved, "betaSmoothed": betaSmoothed}
-    
-
-def getStandardPredictions(tsData, countryName, rangeStart, rangeEnd, daysToPredict):
-    countryData = tsData.countryMap[countryName]
-    countryPopulation = countryData.population
-    tsSizeSliced = rangeEnd - rangeStart + 1
-    #elements = ["S", "I", "R", "beta", "gamma", "betaSmoothed"]
-    #elementsIndex = {}
-    #for i in range(len(elements)):
-    #    elementsIndex[elements[i]] = i
-    
-    fullData = getObservedModelValues(tsData, countryName)
-    #------------------- slicedData = [x[rangeStart:rangeEnd] for x in fullData]
-    
-    sSliced = fullData["S"][rangeStart:rangeEnd + 1]
-    iSliced = fullData["I"][rangeStart:rangeEnd + 1]
-    rSliced = fullData["R"][rangeStart:rangeEnd + 1]
-    betaSliced = fullData["beta"][rangeStart:rangeEnd + 1]
-    gammaSliced = fullData["gamma"][rangeStart:rangeEnd + 1]
-    betaSmoothedSliced = fullData["betaSmoothed"][rangeStart:rangeEnd]
-    
-    betaAvg, betaStdDev = np.mean(betaSliced[tsSizeSliced-7:]), np.std(betaSliced[tsSizeSliced-7:])
-    gammaAvg, gammaStdDev = np.mean(gammaSliced[tsSizeSliced-14:]), np.std(gammaSliced[tsSizeSliced-14:])
-    
-    # At index 0, this will be the same as the last value of the real data
-    predictionDays = daysToPredict + 1 
-    gammaSampleArray1 = newFloatArray(predictionDays)
-    gammaSampleArray2 = newFloatArray(predictionDays)
-    gammaSampleArray3 = newFloatArray(predictionDays)
-    
-    betaConstantTrend = newFloatArray(predictionDays)
-    betaDownwardTrend = newFloatArray(predictionDays)
-    betaContinueTrend = newFloatArray(predictionDays)
-    
-    regr = linear_model.LinearRegression()
-    regr.fit(np.arange(tsSizeSliced - 7, tsSizeSliced).reshape(-1, 1), betaSmoothedSliced[-7:])
-    betaLinearCoefficient = regr.coef_[0]
-    betaLinearIntercept = regr.intercept_ 
-    #betaContinueStart = tsSize * betaLinearCoefficient + betaLinearIntercept
-    
-    for i in range(predictionDays):
-        if i == 0:
-            betaConstantTrend[i] = betaAvg
-            betaDownwardTrend[i] = betaAvg
-            betaContinueTrend[i] = betaAvg
-        else:
-            betaConstantTrend[i] = getRandomVariable(betaAvg)
-            
-            predictionCompletionRatio = i / (predictionDays - 1)
-            betaDownwardMean = max(betaAvg - (betaAvg * predictionCompletionRatio), betaAvg / 10.0)
-            betaDownwardTrend[i] = getRandomVariable(betaDownwardMean)
-             
-            betaContinueMean = max(betaAvg + (betaLinearCoefficient * i), betaAvg / 10.0)
-            betaContinueTrend[i] = getRandomVariable(betaContinueMean)
-            
-        gammaSampleArray1[i] = getRandomVariable(gammaAvg)
-        gammaSampleArray2[i] = getRandomVariable(gammaAvg)
-        gammaSampleArray3[i] = getRandomVariable(gammaAvg)
-         
-    predictionsConstant = getPredictionsSIR(betaConstantTrend, gammaSampleArray1, sSliced[-1], iSliced[-1], rSliced[-1], countryPopulation)
-    predictionsDownward = getPredictionsSIR(betaDownwardTrend, gammaSampleArray2, sSliced[-1], iSliced[-1], rSliced[-1], countryPopulation)
-    predictionsContinueTrend = getPredictionsSIR(betaContinueTrend, gammaSampleArray3, sSliced[-1], iSliced[-1], rSliced[-1], countryPopulation)
-
-    return {"sirConstant": predictionsConstant, "sirDownward": predictionsDownward, \
-            "sirContinueTrend": predictionsContinueTrend, "betaConstant": betaConstantTrend, \
-            "betaDownward": betaDownwardTrend, "betaContinueTrend": betaContinueTrend}
 
 def updateTicks(x, pos):
     return getFullTickLabel(x)   
     
 def analyzeCountrySIR(tsData, countryName):
-    '''
-    tsSize = tsData.dateCount
-    countryData = tsData.countryMap[countryName]
-    
-    countryPopulation = countryData.population
-    
-    confirmed = countryData.confirmed
-    recovered = countryData.recovered
-    deaths = countryData.deaths
-    
-    S = newIntArray(tsSize)
-    I = newIntArray(tsSize)
-    R = newIntArray(tsSize)
-    sDelta = newIntArray(tsSize)
-    iDelta = newIntArray(tsSize)
-    rDelta = newIntArray(tsSize)
-    betaObserved = newFloatArray(tsSize)
-    gammaObserved = newFloatArray(tsSize)
-    
-    for i in range(tsSize):
-        S[i] = countryPopulation - confirmed[i] - deaths[i] - recovered[i]
-        I[i] = confirmed[i]
-        R[i] = deaths[i] + recovered[i]
-    
-        if i == 0:
-            sDelta[i] = 0
-            iDelta[i] = 0
-            rDelta[i] = 0
-            betaObserved[i] = 0.0
-            gammaObserved[i] = 0.0
-        else:
-            sDelta[i] = S[i] - S[i - 1]
-            iDelta[i] = I[i] - I[i - 1]
-            rDelta[i] = R[i] - R[i - 1]
-            
-            if I[i - 1] > 0:
-                betaObserved[i] = (-1 * sDelta[i]) / ((S[i - 1] * I[i - 1]) / countryPopulation)
-                gammaObserved[i] = rDelta[i] / I[i - 1]
-            else:
-                betaObserved[i] = 0
-                gammaObserved[i] = 0
-        
-    #betaSmoothed = performInterpolation(betaObserved)
-    #betaSmoothed3 = getSimpleMovingAverage(betaObserved, 3)
-    #betaSmoothed7 = getSimpleMovingAverage(betaObserved, 7)
-    #savitskyGovol = getSavitskyGovol(betaObserved)
-    gaussianSmoothed3 = getGaussianAverage(betaObserved, 2.5)
-    #gaussianSmoothed2 = getGaussianAverage(betaObserved, 2)
-    
-    betaAvg, betaStdDev = np.mean(betaObserved[tsSize-7:]), np.std(betaObserved[tsSize-7:])
-    gammaAvg, gammaStdDev = np.mean(gammaObserved[tsSize-7:]), np.std(gammaObserved[tsSize-7:])
-    
-    predictionDays = 61
-    gammaSampleArray = newFloatArray(predictionDays)
-    gammaSampleArray2 = newFloatArray(predictionDays)
-    gammaSampleArray3 = newFloatArray(predictionDays)
-    
-    betaConstantTrend = newFloatArray(predictionDays)
-    betaDownwardTrend = newFloatArray(predictionDays)
-    betaContinueTrend = newFloatArray(predictionDays)
-    
-    regr = linear_model.LinearRegression()
-    regr.fit(np.arange(tsSize - 7, tsSize).reshape(-1, 1), gaussianSmoothed3[-7:])
-    betaLinearCoefficient = regr.coef_[0]
-    betaLinearIntercept = regr.intercept_ 
-    #betaContinueStart = tsSize * betaLinearCoefficient + betaLinearIntercept
-    
-    for i in range(predictionDays):
-        betaConstantTrend[i] = getRandomVariable(betaAvg, betaStdDev)
-        
-        dayInMonthFraction = i / predictionDays
-        betaDownwardMean = betaAvg - (betaAvg * dayInMonthFraction)
-        betaDownwardStdDev = betaStdDev * (betaDownwardMean / betaAvg) 
-        betaDownwardTrend[i] = getRandomVariable(betaDownwardMean, betaDownwardStdDev)
-         
-        betaContinueMean = max(betaLinearIntercept + (betaLinearCoefficient * (i + tsSize)), 0.0)
-        betaContinueStdDev = betaStdDev * (betaContinueMean / betaAvg)
-        betaContinueTrend[i] = getRandomVariable(betaContinueMean, betaContinueStdDev)
-        
-        gammaSampleArray[i] = getRandomVariable(gammaAvg, gammaStdDev)
-        gammaSampleArray2[i] = getRandomVariable(gammaAvg, gammaStdDev)
-        gammaSampleArray3[i] = getRandomVariable(gammaAvg, gammaStdDev)
-         
-    SP1, IP1, RP1 = getPredictionsSIR(betaConstantTrend, gammaSampleArray, S[-1], I[-1], R[-1], countryPopulation)
-    SP2, IP2, RP2 = getPredictionsSIR(betaDownwardTrend, gammaSampleArray2, S[-1], I[-1], R[-1], countryPopulation)
-    SP3, IP3, RP3 = getPredictionsSIR(betaContinueTrend, gammaSampleArray3, S[-1], I[-1], R[-1], countryPopulation)
-    
-    '''
-    
     tsSize = tsData.dateCount
     countryData = tsData.countryMap[countryName]
     countryPopulation = countryData.population
     futurePredictionDays = 60 # Arrays will be 31
     cvPredictionDays = 30
     
-    fullData = getObservedModelValues(tsData, countryName)
+    fullData = util.getObservedModelValues(tsData, countryName)
     
     historicalRange = np.arange(tsSize)
     predictionRange = np.arange(tsSize - 1, tsSize + futurePredictionDays)
     
-    futurePredictions = getStandardPredictions(tsData, countryName, 0, tsSize - 1, futurePredictionDays)
-    cvPredictions = getStandardPredictions(tsData, countryName, 0, tsSize - cvPredictionDays - 1, cvPredictionDays)
+    futurePredictions = util.getStandardPredictions(tsData, countryName, 0, tsSize - 1, futurePredictionDays)
+    cvPredictions = util.getStandardPredictions(tsData, countryName, 0, tsSize - cvPredictionDays - 1, cvPredictionDays)
     cvTrainRange = np.arange(0, tsSize - cvPredictionDays)
     cvTestRange = np.arange(tsSize - cvPredictionDays - 1, tsSize)
     cvFullRange = np.arange(0, tsSize)
@@ -432,7 +162,7 @@ if __name__ == '__main__':
     
     #for c in ["China", "Spain", "Germany", "France", "Italy"]: #Brazil", "Russia", "Nigeria", "Mexico"]:
     #    analyzeCountrySIR(tsData, c)
-    analyzeCountrySIR(tsData, "US")
+    analyzeCountrySIR(tsData, "France")
         
     print("Done")
     
