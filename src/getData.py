@@ -20,9 +20,12 @@ def get_country_data_running_total(data, columnName, countryName):
     })
     return transposed
 
+
 '''
 This dataset doesnot have daily new case number
 '''
+
+
 def get_country_data_daily_number(data, columnName, countryName):
     country_data = data.loc[data['Country/Region'] == countryName]
     country_time_series_only = country_data.drop(["Province/State", "Country/Region", "Lat", "Long"], axis=1)
@@ -59,6 +62,7 @@ def get_US_daily(confirmed_df, recovered_df, death_df):
         "US")
     return us_data
 
+
 def get_US_running_total(confirmed_df, recovered_df, death_df):
     us_data = get_country_confirmed_recovered_death_running_total_data(
         confirmed_df,
@@ -79,7 +83,8 @@ def main():
     countries.append("Spain")
     combined_data = pd.DataFrame()
     for country in countries:
-        country_data = get_country_confirmed_recovered_death_running_total_data(confirmed_df, recovered_df, death_df, country)
+        country_data = get_country_confirmed_recovered_death_running_total_data(confirmed_df, recovered_df, death_df,
+                                                                                country)
         data[country] = combined_data
         combined_data[country + "Confirmed"] = country_data.Confirmed
         combined_data[country + "Recovered"] = country_data.Recovered

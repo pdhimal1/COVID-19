@@ -4,11 +4,12 @@ Created on May 16, 2020
 @author: William
 '''
 
+
 class CountryData(object):
     '''
     classdocs
     '''
-    
+
     def __init__(self, name, population, confirmed, recovered, deaths, firstIndex):
         '''
         Constructor
@@ -20,11 +21,12 @@ class CountryData(object):
         self.deaths = deaths
         self.firstIndex = firstIndex
 
+
 class TimeSeriesData(object):
     '''
     classdocs
     '''
-    
+
     def __init__(self, countryMap, countryIndex, dateIndex):
         '''
         Constructor
