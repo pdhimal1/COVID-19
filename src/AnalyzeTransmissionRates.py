@@ -1,8 +1,10 @@
-'''
-Created on May 16, 2020
-
-@author: William
-'''
+"""
+William Austin
+Prakash Dhimal
+George Mason University
+CS 584 Theory and Applications of Data Mining
+Semester project: Predicting the Impact of COVID-19
+"""
 from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
