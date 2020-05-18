@@ -25,3 +25,7 @@ Notes for CS 584 Semester Project
   (2) Constant 7 day average
   (3) Reverse of the last 30 days
   (4) Trending to max
+
+
+- Validation
+  - Convert x-axis labels to "index (date label)"
