@@ -1,3 +1,11 @@
+"""
+William Austin
+Prakash Dhimal
+George Mason University
+CS 584 Theory and Applications of Data Mining
+Semester project: Predicting the Impact of COVID-19
+"""
+
 import pandas as pd
 
 
