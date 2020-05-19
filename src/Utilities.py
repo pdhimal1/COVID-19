@@ -7,6 +7,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter1d
 from scipy.signal import savgol_filter
 from sklearn import linear_model
+import math
 
 
 def newIntArray(size):
@@ -43,6 +44,35 @@ def getSimpleMovingAverage(inputArray, smoothingSize):
             currentSum +=
     '''
     # return f(xValues)
+    
+def boundAtZero(inArray):
+    return np.array([max(x, 0) for x in inArray])
+    
+def getPredictionsSIR2(betaArray, gammaArray, sInit, iInit, rInit, countryPopulation):
+    predictionSize = betaArray.shape[0]
+    sPredict = newFloatArray(predictionSize)
+    iPredict = newFloatArray(predictionSize)
+    rPredict = newFloatArray(predictionSize)
+
+    sPrevious = sInit
+    iPrevious = iInit
+    rPrevious = rInit
+
+    for i in range(predictionSize):
+        infectionCount = (betaArray[i] * (sPrevious * iPrevious)) / countryPopulation
+        recoveryCount = gammaArray[i] * iPrevious
+        sPredict[i] = sPrevious - infectionCount
+        iPredict[i] = iPrevious + infectionCount - recoveryCount
+        rPredict[i] = rPrevious + recoveryCount
+        
+        sPrevious = sPredict[i]
+        iPrevious = iPredict[i]
+        rPrevious = rPredict[i]
+
+            # print("Day = " + str(i) + ": (S, I, R) = (" + str(sPredict[i]) + ", " + str(iPredict[i]) + ", " + str(rPredict[i]) + ")")
+            # print(" -> Infections = " + str(infectionCount) + ", Recoveries = " + str(recoveryCount))
+
+    return {"S": sPredict, "I": iPredict, "R": rPredict}
 
 
 def getPredictionsSIR(betaArray, gammaArray, sInit, iInit, rInit, countryPopulation):
@@ -72,8 +102,8 @@ def getPredictionsSIR(betaArray, gammaArray, sInit, iInit, rInit, countryPopulat
     return [sPredict, iPredict, rPredict]
 
 
-def getRandomVariable(meanValue):
-    rv = np.random.normal(meanValue, meanValue / 8)
+def getRandomVariable(meanValue, factor=8):
+    rv = np.random.normal(meanValue, meanValue / factor)
     return max(rv, 0.0)
 
 
@@ -83,7 +113,6 @@ def getRandomBeta(meanValue):
         return 0.0
 
     return rv
-
 
 def getObservedModelValues(tsData, countryName):
     tsSize = tsData.dateCount
@@ -267,3 +296,44 @@ def buildSlidingWindowTrainingSet(tsData, trainDays, testDays):
                 y = np.concatenate(y_tuple)
 
     return X, y
+
+def fillBetaTransitionQuadratic(startBeta, startBetaSlope, targetBeta, predictionDays):
+    c = startBeta
+    b = startBetaSlope
+    a = (targetBeta - b * predictionDays) / (predictionDays * predictionDays)
+    
+    results = np.zeros(shape=(predictionDays), dtype=np.float64)
+    
+    for i in range(predictionDays):
+        x = i + 1
+        results[i] = (a * x * x) + (b * x) + c
+    
+    return results
+        
+def fillBetaTransitionLinear(startBeta, targetBeta, predictionDays):
+    delta = targetBeta - startBeta
+    
+    results = np.zeros(shape=(predictionDays), dtype=np.float64)
+    
+    for i in range(predictionDays):
+        results[i] = startBeta + (delta * ((i + 1) * 1.0 / predictionDays))
+    
+    return results
+
+def addNoiseToArray(inputArray, factor=8):
+    #arraySize = inputArray.shape[0]
+    noisy = np.array([getRandomVariable(x, factor) for x in inputArray])
+    return noisy
+
+def computeMeanSquareError(trueValues, predictedValues):
+    elementCount = 0
+    sumSquaredErrors = 0.0 
+    for yTrue, yPredicted in zip(trueValues, predictedValues):
+        error = (yPredicted - yTrue)
+        #currentWeight = index + 1
+        sumSquaredErrors += (error * error) #currentWeight * (percentError * percentError)
+        #sumOfWeights += currentWeight
+        #index += 1
+        elementCount += 1
+    
+    return math.sqrt(sumSquaredErrors / elementCount)

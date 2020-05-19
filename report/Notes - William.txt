@@ -1,7 +1,7 @@
 Notes for CS 584 Semester Project
 ---------------------------------
 
-- Probably want to compare other models (UW, etc.).
+- Probably want to compare other models (UW, etc.). See FiveThirtyEight article for this.
   - Compare the model itself (what are they modeling and we are not, and vice-versa)
   - Also compare predictions.
  
@@ -38,14 +38,20 @@ Left To Do 5/18/2020
 ====================
 1. Update report with analysis.
 2. Add code to use scikit optimizer to solver for best beta and gamma!
+   - What countries had the highest and lowest values?
 3. Structure predictions according to these dimesions:
    a) Beta smoothing factor (2.5 is what I've been using)
    b) Number of days in the past to use for the prediction. Usually 1 - 60 days or so.
-   c1) Number of samples points within this interval to use for the the prediction.
-   c2) Maybe a weight scheme for the points??
+   c1) Number of samples points within this interval to use for the the prediction (subsampling)
+       - step by 1, 2, 3, 5, 10, 15 points
+   c2) Maybe a weight scheme for the points - (memory factor)
    d) Method of extrapolation: Trained on NN, constant value, linear model, quadratic?
+   e) Extrapolation method for beta value. Fill in method is (linear vs. quadratic)
+      - Talk about this. We assume that the true beta function is sort of smooth. Probably a bad assumption.
 
 4. Graph the changes across each dimension. Find the best one, report on SSE, make future predictions.
+
+5. Repeat analysis for gamma.
 
 
 
