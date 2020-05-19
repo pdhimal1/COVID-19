@@ -1,8 +1,10 @@
-'''
-Created on May 18, 2020
-
-@author: William
-'''
+"""
+William Austin
+Prakash Dhimal
+George Mason University
+CS 584 Theory and Applications of Data Mining
+Semester project: Predicting the Impact of COVID-19
+"""
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline

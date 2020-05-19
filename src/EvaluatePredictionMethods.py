@@ -1,8 +1,10 @@
-'''
-Created on May 19, 2020
-
-@author: William
-'''
+"""
+William Austin
+Prakash Dhimal
+George Mason University
+CS 584 Theory and Applications of Data Mining
+Semester project: Predicting the Impact of COVID-19
+"""
 import Common as common
 import Utilities as util
 import BetaPredictionMethods as bpm
