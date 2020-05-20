@@ -52,7 +52,7 @@
 \maketitle
 \begin{abstract}
 
-The coronavirus (COVID-19) outbreak caused by the 2019 Novel Coronavirus (2019-nCov) has become a global pandemic, with more than 4 million people infected, and hundreds of thousands of deaths around the globe. Countries across the globe are taking action to control the spread, but there is significant uncertainty about what the future holds. Predicting when the spread of the virus will peak using compartmental modeling in epidemiology has been a huge focus among government, academic institutions, and the private sector. In this paper, we discuss the basic compartmental model in epidemiology, the SIR model and use data mining techniques to fit the SIR model curve with COVID-19 data. Our goal is to to forecast the spread of COVID-19 confirmed cases, fatalities, and recoveries in different countries around the world.
+The coronavirus (COVID-19) outbreak caused by the 2019 Novel Coronavirus (2019-nCov) has become a global pandemic, with more than 4 million people infected, and hundreds of thousands of deaths around the globe. Countries across the globe are taking action to control the spread, but there is significant uncertainty about what the future holds. Predicting when the spread of the virus will peak using compartmental modeling in epidemiology has been a huge focus among government, academic institutions, and the private sector. In this paper, we discuss the basic compartmental model in epidemiology, the SIR model and use data mining techniques to fit the SIR model curve with COVID-19 data. Our goal is to forecast the spread of COVID-19 confirmed cases, fatalities, and recoveries in different countries around the world.
 
 \subsection{Summary of the report}
 
@@ -274,7 +274,7 @@ In addition to these main parameters, we also support 3 different interpolation 
 \end{itemize}
 
 \section{Experimental results and analysis}
-After performing the above experimentation, we were able to closely analyze the performance characteristics of the various candidate models. One of the first first things that we computed was to find the best model for each country's data. The relative performance of each model category is shown below.
+After performing the above experimentation, we were able to closely analyze the performance characteristics of the various candidate models. One of the first things that we computed was to find the best model for each country's data. The relative performance of each model category is shown below.
 
 \begin{figure}[h]
     \includegraphics[width=16cm]{images/CountryCount.png}
@@ -289,7 +289,7 @@ We also note that the best model for the United States is a Quadratic Regression
 
 We also reviewed the relationship between average model error and the number of sample points, separated by model categories. This output is shown below.
 
-\begin{figure}
+\begin{figure}[h]
     \includegraphics[width=16cm]{images/SampleSizeGraph.png}
     \centering
     \caption{Impact of Sample Size on Model Error}
@@ -336,7 +336,7 @@ It basically runs a ton of different variations of models against the data for a
 \subsubsection{Discussion}
 Any model is only as good as the assumptions that we make. Unfortunately the SIR model makes many overly simplistic assumptions, as a trade-off for simplicity. Many of these assumptions prevent a challenge for us when trying to improve the accuracy of our estimates because the data reflects activities that are happening in reality, but not accounted for in any way by the model.
 
-The sensitivity of the $\beta$ and $\gamma$ parameters and the large impact to the SR model output, even in cases of exceedingly small discrepancies was also challenging. We found that initial assumptions and the results differ considerably between models. 
+The sensitivity of the $\beta$ and $\gamma$ parameters and the large impact to the SIR model output, even in cases of exceedingly small discrepancies was also challenging. We found that initial assumptions and the results differ considerably between models. 
 
 Another lesson learned from this project is that the general regression problem is extremely challenging and additional work will be needed to continue to improve the future predictions for the $\beta(t)$ function, as it is generally not a simple function. Our work could probably be extended by adding logic to detect conditions when some models are more applicable than others. 
 
