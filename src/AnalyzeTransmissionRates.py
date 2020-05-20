@@ -205,11 +205,11 @@ if __name__ == '__main__':
 
     allCharts = {"HistoricalBetaChart", "PredictionChart", "PredictionsBetaChart", "ValidationChart"}
 
-    for c in ["US", "Canada", "China", "Spain", "Germany", "France", "Italy", "Brazil", "Russia", "Nigeria", "Mexico"]:
-        analyzeCountrySIR(tsData, c, {"HistoricalBetaChart"}, False)
+    # for c in ["US", "Canada", "China", "Germany", "France", "Italy", "Brazil", "Russia", "Nigeria", "Mexico"]:
+    #    analyzeCountrySIR(tsData, c, {"HistoricalBetaChart"}, False)
 
-    plt.show()
+    #plt.show()
 
-    # analyzeCountrySIR(tsData, "France")
+    analyzeCountrySIR(tsData, "US", allCharts, True)
 
     print("Done")
