@@ -32,6 +32,7 @@ Please refer to: `report/report.pdf` for the project report
 #### Dependency:
 This python program depends on the following modules:
   * datetime
+  * math
   * matplotlib
   * numpy
   * os
