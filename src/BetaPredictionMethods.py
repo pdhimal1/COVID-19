@@ -16,8 +16,9 @@ def calculateSlopeHistoryList(betaValuesArray, memoryFactor=0.15, step=1):
     slopeHistoryList = []
     i = arraySize - 1
     
-    memWeightSum = 0.0
-    memWeight = 1 - memoryFactor
+    weightSum = 0.0
+    memRatio = 1 - memoryFactor
+    memWeight = 1.0
         
     while i >= 1:
         start = betaValuesArray[i - 1]
@@ -31,10 +32,10 @@ def calculateSlopeHistoryList(betaValuesArray, memoryFactor=0.15, step=1):
         slopeHistoryTuple = (slope, memWeight)
         slopeHistoryList.append(slopeHistoryTuple)
         i -= 1
-        memWeightSum += memWeight
-        memWeight *= memWeight
+        weightSum += memWeight
+        memWeight *= memRatio
     
-    return slopeHistoryList, memWeightSum
+    return slopeHistoryList, weightSum
 
 def getBetaPredictionBySlopeHistory(betaValuesArray, lastBetaValue, predictionDays, memoryFactor=0.15, step=1):
     slopeHistoryList, weightSum = calculateSlopeHistoryList(betaValuesArray, memoryFactor, step)
@@ -57,17 +58,18 @@ def calculateValueHistoryList(betaValuesArray, memoryFactor=0.15):
     historyList = []
     i = arraySize - 1
     
-    memWeightSum = 0.0
-    memWeight = 1 - memoryFactor
+    weightSum = 0.0
+    memRatio = 1 - memoryFactor
+    memWeight = 1.0
         
-    while i >= 1:
-        valueTuple = (betaValuesArray[1], memWeight)
+    while i >= 0:
+        valueTuple = (betaValuesArray[i], memWeight)
         historyList.append(valueTuple)
         i -= 1
-        memWeightSum += memWeight
-        memWeight *= memWeight
+        weightSum += memWeight
+        memWeight *= memRatio
     
-    return historyList, memWeightSum
+    return historyList, weightSum
 
 # Set the memory Factor to 0 for linear averaging
 def getBetaPredictionByValueHistory(betaValuesArray, memoryFactor=0.15):

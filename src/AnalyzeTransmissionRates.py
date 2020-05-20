@@ -29,12 +29,18 @@ def updateTicks(x, pos):
 
 
 def createHistoricalBetaChart(historicalRange, fullData, countryName):
+    betaSmoothed15 = util.getGaussianAverage(fullData["beta"], 1.5)
+    betaSmoothed4 = util.getGaussianAverage(fullData["beta"], 4)
+    
     figure1, axis1 = plt.subplots()
     figure1.set_size_inches(7.5, 7.5)
-    axis1.plot(historicalRange, fullData["beta"], label="Observed beta", color="gray")
+    figure1.subplots_adjust(bottom=0.16)
+    axis1.plot(historicalRange, fullData["beta"], label="Observed Beta", color="gray")
     # plt.plot(betaSmoothed3)
     # plt.plot(betaSmoothed7)
-    axis1.plot(historicalRange, fullData["betaSmoothed"], label="Smoothed beta", color="blue")
+    axis1.plot(historicalRange, betaSmoothed15, label="Smoothed Beta, Sigma = 1.5", color="blue")
+    axis1.plot(historicalRange, fullData["betaSmoothed"], label="Smoothed Beta, Sigma = 2.5", color="deepskyblue")
+    axis1.plot(historicalRange, betaSmoothed4, label="Smoothed Beta, Sigma = 4", color="limegreen")
     # plt.plot(gaussianSmoothed2)
     axis1.set_xlabel("Day Number")
     axis1.set_ylabel("Transmission Rate")
@@ -185,6 +191,7 @@ def analyzeCountrySIR(tsData, countryName, chartSet, callShowPlot=True):
         createValidationChart(tsSize, fullData, cvPredictionDays, cvFullRange, cvTestRange, cvPredictions, countryName)
 
     if callShowPlot:
+        plt.tight_layout()
         plt.show()
 
 
@@ -198,7 +205,7 @@ if __name__ == '__main__':
 
     allCharts = {"HistoricalBetaChart", "PredictionChart", "PredictionsBetaChart", "ValidationChart"}
 
-    for c in ["China", "Spain", "Germany", "France", "Italy", "Brazil", "Russia", "Nigeria", "Mexico"]:
+    for c in ["US", "Canada", "China", "Spain", "Germany", "France", "Italy", "Brazil", "Russia", "Nigeria", "Mexico"]:
         analyzeCountrySIR(tsData, c, {"HistoricalBetaChart"}, False)
 
     plt.show()

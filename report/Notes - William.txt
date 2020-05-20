@@ -53,11 +53,23 @@ Left To Do 5/18/2020
 
 5. Repeat analysis for gamma.
 
-
-
 Ideas for report:
  - Outline the intuition behind the beta and gamma parameters.
    - How do the things that we hear about (social distancing, contact tracing, bed count, etc.) influence these parameters?
  - 
 
 - Beta representation - absolute vs. multiplied by N.
+
+- Ability to integrate real life changes into estimates for beta!
+- Shortcomings of SIR
+- Integrate other data sources.
+
+- Need to estimate gamma as well!
+
+- Time of model: 14 vs. 60
+
+- Other regression tools
+
+- Note that we incorporated Population data!!
+
+
