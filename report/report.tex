@@ -331,7 +331,7 @@ Given that we are undertaking a regression problem rather than a classification 
 
 In addition to these scores, we also used our models to generate estimates for future counts and then evaluate how close our predictions are once these counts become available. This is a fortunate consequence of analyzing time-series data for an event that is currently in progress.
 
-We ran a ton of different variations of models against the data for all of the countries, does a 14-day prediction, calculate the RMSE score for the prediction, and then aggregates the results from all the models across all of the countries to pick the best one.
+We ran a ton of different variations of models against the data for all of the countries to do a 14-day prediction, calculate the RMSE score for the prediction, and then aggregates the results from all the models across all of the countries to pick the best one.
 
 \subsubsection{Discussion}
 Any model is only as good as the assumptions that we make. Unfortunately, the SIR model makes many overly simplistic assumptions, as a trade-off for simplicity. Many of these assumptions prevent a challenge for us when trying to improve the accuracy of our estimates because the data reflects activities that are happening in reality, but not accounted for in any way by the model.
